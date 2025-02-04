@@ -1,6 +1,6 @@
 from sqlalchemy.ext.asyncio import create_async_engine, AsyncSession
 from sqlalchemy.orm import sessionmaker, declarative_base
-from sqlalchemy import Column, Integer, String, DateTime
+from sqlalchemy import Column, Integer, String, DateTime, BigInteger
 from sqlalchemy.future import select
 from sqlalchemy.exc import SQLAlchemyError
 from datetime import datetime
@@ -31,9 +31,9 @@ Base = declarative_base()
 # Модель Users
 class Users(Base):
     __tablename__ = 'users'
-    id = Column(Integer, primary_key=True)
-    telegram_id = Column(Integer, nullable=False, unique=True)
-    username = Column(String(100), nullable=True)
+    id = Column(BigInteger, primary_key=True)
+    telegram_id = Column(BigInteger, nullable=False, unique=True)
+    username = Column(String(100), nullable=True, default="No name")
     whois = Column(String(20), nullable=True)
     bio = Column(String(1000), nullable=True)
     created_on = Column(DateTime, default=datetime.now)
@@ -58,14 +58,14 @@ class User:
                 result = await db.execute(select(Users).filter_by(telegram_id=id))
                 existing_user = result.scalar_one_or_none()
                 if existing_user:
-                    print("User already exists")
+                    logger.debug("User already exists")
                     return
                 
                 # Создание нового пользователя
                 user = Users(telegram_id=id, username=name)
                 db.add(user)
                 await db.commit()
-                print(f"User {name} created successfully!")
+                logger.debug(f"User {name} created successfully!")
             except SQLAlchemyError as e:
                 await db.rollback()
-                print(f"Database error: {e}")
+                logger.error(f"Database error: {e}")
