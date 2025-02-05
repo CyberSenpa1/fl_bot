@@ -30,6 +30,7 @@ async def main() -> None:
 
     # And the run events dispatching
     await dp.start_polling(bot)
+    await print("Запуск")
 
 
 if __name__ == "__main__":
