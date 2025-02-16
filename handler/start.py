@@ -16,3 +16,4 @@ async def cmd_start(message: Message):
     )
     # Call create_user with 'await' for async handling
     await User.create_user(user_id, username)
+    
