@@ -6,12 +6,16 @@ stages:          # List of stages for jobs, and their order of execution
 build-job:       # This job runs in the build stage, which runs first.
   stage: build
   script:
-    - docker build -t backend-image .
+    - docker compose build
 
 test-job:
   stage: test
   script:
-    - echo "Тестирование прошло успешно"
+    - echo "Запущен тест"
+    - docker compose up 
+    - echo "Контейнер запущен"
+    - docker compose down
+    - echo "Контейнер удален"
 
 deploy-job:
   stage: deploy
