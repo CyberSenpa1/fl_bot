@@ -1,24 +1,30 @@
-stages:          # List of stages for jobs, and their order of execution
+stages:
   - build
   - test
   - deploy
 
-build-job:       # This job runs in the build stage, which runs first.
+variables:
+  DOCKER_HOST: tcp://docker:2375/
+  COMPOSE_PROJECT_NAME: my_app
+
+services:
+  - docker:dind
+
+build:
   stage: build
   script:
+    - echo "Создание контейнера..."
     - docker compose build
 
-test-job:
+test:
   stage: test
   script:
-    - echo "Запущен тест"
-    - docker compose up 
-    - echo "Контейнер запущен"
+    - echo "Запуск теста..."
+    - docker compose up -d
     - docker compose down
-    - echo "Контейнер удален"
 
-deploy-job:
+deploy:
   stage: deploy
   script:
-    - docker compose up -d 
-  
+    - echo "Деплой приложения..."
+
